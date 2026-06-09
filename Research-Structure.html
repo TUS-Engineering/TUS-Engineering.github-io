@@ -1,0 +1,463 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TUS Faculty of Engineering & Technology – Research Structure</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f5f4f0; color: #1a1a1a; min-height: 100vh; }
+
+  header { background: #1a1a2e; color: #fff; padding: 18px 32px; display: flex; align-items: center; gap: 16px; }
+  header .logo { font-size: 22px; font-weight: 700; color: #f0c040; letter-spacing: 1px; }
+  header h1 { font-size: 15px; font-weight: 400; color: #ccc; line-height: 1.3; }
+  header h1 strong { color: #fff; font-weight: 600; font-size: 16px; display: block; }
+
+  .legend { display: flex; flex-wrap: wrap; gap: 10px; padding: 14px 32px; background: #fff; border-bottom: 1px solid #e0ddd5; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: #444; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+
+  .canvas { padding: 24px 32px 48px; overflow-x: auto; }
+  .structure { min-width: 900px; display: flex; flex-direction: column; gap: 0; }
+
+  .tier { display: flex; align-items: flex-start; gap: 0; margin-bottom: 2px; }
+  .tier-label { width: 130px; flex-shrink: 0; padding: 10px 14px 10px 0; font-size: 11px; font-weight: 600; color: #666; text-transform: uppercase; letter-spacing: 0.5px; padding-top: 14px; }
+  .tier-boxes { flex: 1; display: flex; flex-wrap: wrap; gap: 8px; padding: 8px 0; }
+
+  .box {
+    position: relative;
+    border-radius: 8px;
+    padding: 9px 12px;
+    cursor: pointer;
+    transition: transform 0.12s, box-shadow 0.12s;
+    border: 2px solid transparent;
+    min-width: 130px;
+    max-width: 220px;
+    user-select: none;
+  }
+  .box:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(0,0,0,0.15); }
+  .box:focus { outline: 3px solid #f0c040; outline-offset: 2px; }
+  .box .box-name { font-size: 12px; font-weight: 700; line-height: 1.3; }
+  .box .box-sub { font-size: 10px; font-weight: 400; margin-top: 2px; line-height: 1.3; opacity: 0.85; }
+
+  /* DEPT */
+  .type-dept { background: #e8dfc8; border-color: #b8a87a; color: #3d3000; }
+  /* INSTITUTE */
+  .type-inst { background: #c9d4f0; border-color: #4a6bc4; color: #1a2c6b; }
+  .type-inst.wide { min-width: 200px; }
+  /* GATEWAY */
+  .type-gateway { background: #f4c6d4; border-color: #c0485a; color: #7b0025; }
+  .type-gateway.wide { min-width: 180px; }
+  /* CLUSTER */
+  .type-cluster { background: #c5eef0; border-color: #2a9fa8; color: #005f66; }
+  /* CENTRE */
+  .type-centre { background: #f7c8a8; border-color: #b06020; color: #7a3000; }
+  /* GROUP */
+  .type-group { background: #cfe9c4; border-color: #5a9a3a; color: #1a4d00; }
+  .type-group.prism-border { border-color: #4a6bc4; }
+  .type-group.ideam-border { border-color: #2e8b57; }
+  .type-group.sri-border { border-color: #c0392b; }
+  /* HUB */
+  .type-hub { background: #fff0c0; border-color: #c8940a; color: #6b4000; }
+
+  /* Tooltip */
+  .tooltip {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    background: #1a1a2e;
+    color: #fff;
+    border-radius: 10px;
+    padding: 14px 16px;
+    max-width: 320px;
+    font-size: 13px;
+    line-height: 1.6;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.35);
+    pointer-events: none;
+  }
+  .tooltip .tt-name { font-weight: 700; font-size: 14px; margin-bottom: 4px; color: #f0c040; }
+  .tooltip .tt-type { font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: #aaa; margin-bottom: 8px; }
+  .tooltip .tt-desc { color: #ddd; }
+
+  .divider { height: 1px; background: #ddd8cc; margin: 10px 0; }
+  .section-gap { height: 18px; }
+
+  @media (max-width: 700px) {
+    header { padding: 14px 16px; flex-wrap: wrap; }
+    .canvas { padding: 16px; }
+    .tier-label { width: 90px; font-size: 10px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">TUS</div>
+  <h1><strong>Faculty of Engineering &amp; Technology</strong> Research Structure — hover any box for details</h1>
+</header>
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:#e8dfc8;border:1.5px solid #b8a87a"></div> Department</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#c9d4f0;border:1.5px solid #4a6bc4"></div> Research Institute</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f4c6d4;border:1.5px solid #c0485a"></div> Technology Gateway</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#c5eef0;border:1.5px solid #2a9fa8"></div> Cluster</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#f7c8a8;border:1.5px solid #b06020"></div> Research Centre</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#cfe9c4;border:1.5px solid #5a9a3a"></div> Research Group</div>
+  <div class="legend-item"><div class="legend-dot" style="background:#fff0c0;border:1.5px solid #c8940a"></div> Innovation Hub</div>
+  <div class="legend-item" style="margin-left:8px; padding-left:8px; border-left:1px solid #ddd;">
+    <span style="font-size:11px; color:#666;">Border colour = parent institute</span>
+  </div>
+</div>
+
+<div class="canvas">
+<div class="structure">
+
+  <!-- DEPARTMENTS -->
+  <div class="tier">
+    <div class="tier-label">Departments</div>
+    <div class="tier-boxes">
+      <div class="box type-dept" tabindex="0"
+        data-name="Polymer, Mechanical &amp; Design"
+        data-type="Department"
+        data-desc="Covers polymer science, mechanical engineering, and product design, underpinning TUS Athlone's 50+ year heritage in materials processing and engineering design education.">
+        <div class="box-name">Polymer, Mechanical &amp; Design</div>
+      </div>
+      <div class="box type-dept" tabindex="0"
+        data-name="Computer &amp; Software Engineering"
+        data-type="Department"
+        data-desc="Delivers education and research in software development, systems engineering, and computer science, feeding directly into the Software Research Institute (SRI).">
+        <div class="box-name">Computer &amp; Software Engineering</div>
+      </div>
+      <div class="box type-dept" tabindex="0"
+        data-name="Civil Engineering &amp; Trades"
+        data-type="Department"
+        data-desc="Provides programmes in structural and civil engineering alongside trades education, supporting the built environment and construction sectors, with links to SUIR and BETER.">
+        <div class="box-name">Civil Engineering &amp; Trades</div>
+      </div>
+      <div class="box type-dept" tabindex="0"
+        data-name="Built Environment"
+        data-type="Department"
+        data-desc="Focuses on architecture, construction management, and sustainable building design, linking closely to the BETER and SUIR research groups.">
+        <div class="box-name">Built Environment</div>
+      </div>
+      <div class="box type-dept" tabindex="0"
+        data-name="Electrical &amp; Electronic Engineering"
+        data-type="Department"
+        data-desc="Covers power systems, electronics, embedded systems, and automation, with research connections to the ACORN Research Centre and Sensing Engineering Technology Laboratory.">
+        <div class="box-name">Electrical &amp; Electronic Engineering</div>
+      </div>
+      <div class="box type-dept" tabindex="0"
+        data-name="Mechanical &amp; Automobile Engineering"
+        data-type="Department"
+        data-desc="Delivers programmes in mechanical systems, manufacturing technology, and automotive engineering, with strong industry placement and links to PRISM-aligned research.">
+        <div class="box-name">Mechanical &amp; Automobile Engineering</div>
+      </div>
+      <div class="box type-dept" tabindex="0"
+        data-name="Information Technology"
+        data-type="Department"
+        data-desc="Provides IT programmes spanning networks, cybersecurity, data analytics, and software development, supported by the CaIR (Computing &amp; Informatics Research Group).">
+        <div class="box-name">Information Technology</div>
+      </div>
+      <div class="box type-dept" tabindex="0"
+        data-name="Technology Education"
+        data-type="Department"
+        data-desc="Focuses on the teaching and learning of technology subjects at all educational levels, and is home to the Technology Education Research Group (TERG), established 2010.">
+        <div class="box-name">Technology Education</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- RESEARCH INSTITUTES -->
+  <div class="tier">
+    <div class="tier-label">Research Institutes</div>
+    <div class="tier-boxes">
+      <div class="box type-inst wide" tabindex="0"
+        data-name="PRISM"
+        data-type="Research Institute — Athlone"
+        data-desc="Polymer, Recycling, Industrial, Sustainability &amp; Manufacturing Research Institute. TUS Athlone's flagship polymer institute, building on 50+ years of engagement with the Irish polymer sector. Conducts research across TRL levels 1–9, from fundamental science to industrial deployment.">
+        <div class="box-name">PRISM</div>
+        <div class="box-sub">Polymer, Recycling, Industrial, Sustainability &amp; Manufacturing</div>
+      </div>
+      <div class="box type-inst wide" tabindex="0"
+        data-name="SRI"
+        data-type="Research Institute — Athlone"
+        data-desc="Software Research Institute. Conducts applied research in cybersecurity, cloud-edge computing, network protocols, immersive multimedia systems, robotic control, and multi-robot collaboration. Acts as the institutional catalyst for digital technology innovation with industry partners.">
+        <div class="box-name">SRI</div>
+        <div class="box-sub">Software Research Institute</div>
+      </div>
+      <div class="box type-inst wide" tabindex="0"
+        data-name="IDEAM"
+        data-type="Research Institute — Limerick (Moylish)"
+        data-desc="Irish Digital Engineering &amp; Advanced Manufacturing Institute. Drives digital and green transformation across industries from the TUS Limerick campus. Bridges academia and industry through collaborative R&amp;D, smart manufacturing, and Industry 5.0 technologies, working with 100+ industry partners.">
+        <div class="box-name">IDEAM</div>
+        <div class="box-sub">Irish Digital Engineering &amp; Advanced Manufacturing</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- GATEWAYS / CLUSTERS -->
+  <div class="tier">
+    <div class="tier-label">Gateways / Clusters</div>
+    <div class="tier-boxes">
+      <div class="box type-gateway" tabindex="0"
+        data-name="APT"
+        data-type="Technology Gateway (PRISM)"
+        data-desc="Applied Polymer Technologies. Enterprise Ireland-funded gateway operating under PRISM. Delivers polymer technology solutions — analytical testing, processing, and 3D prototyping — for companies in medical, composite, sustainability, and pharmaceutical sectors. Has completed 825+ projects worth €5.3M+ since 2013.">
+        <div class="box-name">APT</div>
+        <div class="box-sub">Applied Polymer Technologies</div>
+      </div>
+      <div class="box type-cluster" tabindex="0"
+        data-name="ATIM Cluster"
+        data-type="Industry Cluster (PRISM)"
+        data-desc="Advanced Technologies in Manufacturing. Industry-led cluster funded by Enterprise Ireland and hosted by TUS, connecting Midlands SMEs and multinationals with academia to drive innovation, skills, and competitiveness in advanced and sustainable manufacturing. 100+ members across automation, medtech, polymer, and food sectors.">
+        <div class="box-name">ATIM Cluster</div>
+        <div class="box-sub">Advanced Technologies in Manufacturing</div>
+      </div>
+      <div class="box type-gateway" tabindex="0"
+        data-name="COMAND"
+        data-type="Technology Gateway (SRI)"
+        data-desc="Connected Media Application Design &amp; Delivery. Enterprise Ireland-funded gateway within SRI, supporting companies to innovate in digital media through AI &amp; machine learning, smart manufacturing, robotics, IoT, and end-to-end application development.">
+        <div class="box-name">COMAND</div>
+        <div class="box-sub">Connected Media App. Design &amp; Delivery</div>
+      </div>
+      <div class="box type-gateway" tabindex="0"
+        data-name="Smarter Factory Technology Gateway"
+        data-type="Technology Gateway (IDEAM)"
+        data-desc="Enterprise Ireland-funded gateway operating under IDEAM at TUS Limerick. Supports businesses of all sizes in achieving digital and green transformation through Industry 4.0/5.0 technologies, data-driven intelligence, and flexible adaptive manufacturing processes.">
+        <div class="box-name">Smarter Factory Technology Gateway</div>
+      </div>
+      <div class="box type-cluster" tabindex="0"
+        data-name="IDEAM Cluster"
+        data-type="Industry Cluster (IDEAM)"
+        data-desc="National cluster initiative aligned with the IDEAM Research Institute, supporting SMEs and enterprises in the Midwest and beyond through collaborative innovation programmes, digitalisation supports, and green transformation partnerships.">
+        <div class="box-name">IDEAM Cluster</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- CENTRES -->
+  <div class="tier">
+    <div class="tier-label">Centres</div>
+    <div class="tier-boxes">
+      <div class="box type-centre" tabindex="0"
+        data-name="CPS"
+        data-type="Research Centre (PRISM)"
+        data-desc="Centre for Polymer Sustainability. Research centre within PRISM focused on developing sustainable polymer systems, circular economy solutions, and bio-based alternatives aligned with EU environmental and regulatory performance goals.">
+        <div class="box-name">CPS</div>
+        <div class="box-sub">Centre for Polymer Sustainability</div>
+      </div>
+      <div class="box type-centre" tabindex="0"
+        data-name="CISD"
+        data-type="Research Centre (PRISM / APT)"
+        data-desc="Centre for Industrial Services &amp; Design. Provides specialist analytical testing, product development, and design services to Irish industry through the APT gateway, bridging concept to prototype for companies from start-ups to multinationals. Offers advanced polymer testing technologies and highly qualified staff.">
+        <div class="box-name">CISD</div>
+        <div class="box-sub">Centre for Industrial Services &amp; Design</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- RESEARCH GROUPS Row 1 -->
+  <div class="tier">
+    <div class="tier-label">Research Groups</div>
+    <div class="tier-boxes">
+      <div class="box type-group prism-border" tabindex="0"
+        data-name="TERG"
+        data-type="Research Group (PRISM)"
+        data-desc="Technology Education Research Group. Established 2010. Conducts basic and applied research into the teaching and learning of technology at all educational levels, aiming for international impact on technology education policy and practice.">
+        <div class="box-name">TERG</div>
+        <div class="box-sub">Technology Education Research Group</div>
+      </div>
+      <div class="box type-group prism-border" tabindex="0"
+        data-name="Smart Polymer Research Group"
+        data-type="Research Group (PRISM)"
+        data-desc="Investigates the design, processing, and characterisation of smart and functional polymer materials, including stimuli-responsive systems for biomedical, packaging, and industrial applications.">
+        <div class="box-name">Smart Polymer Research Group</div>
+      </div>
+      <div class="box type-group prism-border" tabindex="0"
+        data-name="AMMP"
+        data-type="Research Group (PRISM)"
+        data-desc="Advanced Materials &amp; Manufacturing Platform. Specialises in thermoplastics, composites, resins, and adhesives, developing novel manufacturing processes and affordable advanced materials solutions for sectors from medicine and automotive to packaging and aerospace.">
+        <div class="box-name">AMMP</div>
+        <div class="box-sub">Advanced Materials &amp; Manufacturing Platform</div>
+      </div>
+      <div class="box type-group sri-border" tabindex="0"
+        data-name="Robotics &amp; Automation Research Group"
+        data-type="Research Group (SRI)"
+        data-desc="Carries out applied research in robotic systems, autonomous control, and industrial automation, supporting Industry 4.0 integration for manufacturing and process industries.">
+        <div class="box-name">Robotics &amp; Automation Research Group</div>
+      </div>
+      <div class="box type-group sri-border" tabindex="0"
+        data-name="HCIDMS"
+        data-type="Research Centre (SRI)"
+        data-desc="Human Centric &amp; Intelligent Digital Media Systems. Research centre within SRI measuring Quality of Experience (QoE) in human-technology interaction, with expertise in extended reality (XR), AI, smart sensing, multisensory systems, acoustic design, and health-technology applications.">
+        <div class="box-name">HCIDMS</div>
+        <div class="box-sub">Human Centric &amp; Intelligent Digital Media Systems</div>
+      </div>
+      <div class="box type-group sri-border" tabindex="0"
+        data-name="Sensing Engineering Technology Laboratory"
+        data-type="Research Group (SRI)"
+        data-desc="Develops sensing technologies and instrumentation for monitoring physical, chemical, and environmental parameters, with applications in industrial process control and environmental management.">
+        <div class="box-name">Sensing Engineering Technology Laboratory</div>
+      </div>
+      <div class="box type-group ideam-border" tabindex="0"
+        data-name="BETER"
+        data-type="Research Group (IDEAM)"
+        data-desc="Built Environment Technology Education Research Group. Focuses on technology-enhanced learning and pedagogical research in built environment disciplines, linking engineering education practice with the construction and civil engineering sectors.">
+        <div class="box-name">BETER</div>
+        <div class="box-sub">Built Environment Technology Education Research Group</div>
+      </div>
+      <div class="box type-group ideam-border" tabindex="0"
+        data-name="Civil Engineering Research Group"
+        data-type="Research Group (IDEAM)"
+        data-desc="Conducts applied research in structural engineering, construction materials, and infrastructure assessment, delivering practical solutions for the Irish construction industry and sector partners.">
+        <div class="box-name">Civil Engineering Research Group</div>
+      </div>
+      <div class="box type-group ideam-border" tabindex="0"
+        data-name="CaIR"
+        data-type="Research Group (IDEAM)"
+        data-desc="Computing &amp; Informatics Research Group. TUS Midwest's IT department research group covering future networks, IoT, data analytics, AI/machine learning, cybersecurity, digital platforms, and augmented/virtual reality across the full ICT spectrum.">
+        <div class="box-name">CaIR</div>
+        <div class="box-sub">Computing &amp; Informatics Research Group</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESEARCH GROUPS Row 2 -->
+  <div class="tier">
+    <div class="tier-label"></div>
+    <div class="tier-boxes">
+      <div class="box type-group prism-border" tabindex="0"
+        data-name="Polymer Nano Biotechnology Group"
+        data-type="Research Group (PRISM)"
+        data-desc="Investigates the intersection of polymer science, nanotechnology, and biotechnology, developing nano-enabled polymer systems for drug delivery, diagnostics, and biomedical applications.">
+        <div class="box-name">Polymer Nano Biotechnology Group</div>
+      </div>
+      <div class="box type-group sri-border" tabindex="0"
+        data-name="IVCC"
+        data-type="Research Group (SRI)"
+        data-desc="Intelligent Video Computation &amp; Communication Research Group. Focused on video-based AI systems, computer vision, and multimedia communications, with applications in surveillance, intelligent transport, privacy-compliant analytics, and smart environments.">
+        <div class="box-name">IVCC</div>
+        <div class="box-sub">Intelligent Video Computation &amp; Communication</div>
+      </div>
+      <div class="box type-group ideam-border" tabindex="0"
+        data-name="SUIR"
+        data-type="Research Group (IDEAM)"
+        data-desc="SUstainable Infrastructure Research Group. Investigates sustainable concrete technology, innovative construction materials, structural condition monitoring, and the digitisation of construction processes. Members are active in SFI projects, Enterprise Ireland schemes, and COST Action networks.">
+        <div class="box-name">SUIR</div>
+        <div class="box-sub">SUstainable Infrastructure</div>
+      </div>
+      <div class="box type-group ideam-border" tabindex="0"
+        data-name="ACORN"
+        data-type="Research Group / Centre (IDEAM)"
+        data-desc="ACORN Research Centre. Focused on the development of intelligent systems for industrial automation, environmental monitoring, energy management, and integrated renewable energy. Develops technical solutions through industry-led collaborative research programmes.">
+        <div class="box-name">ACORN</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESEARCH GROUPS Row 3 (new groups) -->
+  <div class="tier">
+    <div class="tier-label"></div>
+    <div class="tier-boxes">
+      <div class="box type-group prism-border" tabindex="0"
+        data-name="POLYC2"
+        data-type="Research Group (PRISM)"
+        data-desc="Polymers for Circularity &amp; Carbon Neutrality. Interdisciplinary research group under PRISM delivering science-to-impact across polymer value chains — circular packaging, advanced recycling, bio-based materials, and EU circular economy compliance.">
+        <div class="box-name">POLYC2</div>
+        <div class="box-sub">Polymers for Circularity &amp; Carbon Neutrality</div>
+      </div>
+      <div class="box type-group ideam-border" tabindex="0"
+        data-name="SkyBridge Applied Research"
+        data-type="Research Group (IDEAM)"
+        data-desc="Space-enabled intelligence for critical infrastructure. Integrates satellite-derived Earth Observation (EO) data with terrestrial sensing and edge AI to support monitoring and management of critical infrastructure including ports, quarries, and offshore energy sites. Led by Dr Flaithrí Neff.">
+        <div class="box-name">SkyBridge Applied Research</div>
+        <div class="box-sub">Space-Enabled Intelligence for Critical Infrastructure</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- INNOVATION HUBS -->
+  <div class="tier">
+    <div class="tier-label">Innovation Hubs</div>
+    <div class="tier-boxes">
+      <div class="box type-hub" tabindex="0"
+        data-name="MIRC"
+        data-type="Innovation Hub — Athlone"
+        data-desc="Midlands Innovation &amp; Research Centre. Enterprise Ireland-supported hub at TUS Athlone providing incubation space, business supports, and the New Frontiers entrepreneur development programme (in collaboration with Maynooth University) for start-ups and SMEs across the Midlands region.">
+        <div class="box-name">MIRC</div>
+        <div class="box-sub">Midlands Innovation &amp; Research Centre</div>
+      </div>
+      <div class="box type-hub" tabindex="0"
+        data-name="Hartnett Enterprise Acceleration Centre"
+        data-type="Innovation Hub — Limerick (Moylish)"
+        data-desc="TUS Limerick's business acceleration centre serving Ireland's Mid-West. Offers incubation units, mentoring, and the New Frontiers entrepreneur programme to support early-stage companies in research commercialisation, startup development, and internationalisation. Has helped create 90+ companies since 2006.">
+        <div class="box-name">Hartnett Enterprise Acceleration Centre</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- Tooltip -->
+<div class="tooltip" id="tooltip">
+  <div class="tt-name" id="tt-name"></div>
+  <div class="tt-type" id="tt-type"></div>
+  <div class="tt-desc" id="tt-desc"></div>
+</div>
+
+<script>
+  const tooltip = document.getElementById('tooltip');
+  const ttName = document.getElementById('tt-name');
+  const ttType = document.getElementById('tt-type');
+  const ttDesc = document.getElementById('tt-desc');
+
+  let hideTimer;
+
+  function showTooltip(box, e) {
+    clearTimeout(hideTimer);
+    ttName.textContent = box.dataset.name;
+    ttType.textContent = box.dataset.type;
+    ttDesc.innerHTML = box.dataset.desc;
+    tooltip.style.display = 'block';
+    positionTooltip(e);
+  }
+
+  function positionTooltip(e) {
+    const tw = 320, th = 150;
+    const vw = window.innerWidth, vh = window.innerHeight;
+    let x = e.clientX + 14;
+    let y = e.clientY + 14;
+    if (x + tw > vw - 10) x = e.clientX - tw - 14;
+    if (y + th > vh - 10) y = e.clientY - th - 14;
+    tooltip.style.left = Math.max(8, x) + 'px';
+    tooltip.style.top = Math.max(8, y) + 'px';
+  }
+
+  function hideTooltip() {
+    hideTimer = setTimeout(() => { tooltip.style.display = 'none'; }, 100);
+  }
+
+  document.querySelectorAll('.box').forEach(box => {
+    box.addEventListener('mouseenter', e => showTooltip(box, e));
+    box.addEventListener('mousemove', positionTooltip);
+    box.addEventListener('mouseleave', hideTooltip);
+    box.addEventListener('focus', e => {
+      const r = box.getBoundingClientRect();
+      showTooltip(box, { clientX: r.right, clientY: r.top });
+    });
+    box.addEventListener('blur', hideTooltip);
+  });
+</script>
+</body>
+</html>
